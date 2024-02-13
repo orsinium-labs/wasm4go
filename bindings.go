@@ -1,7 +1,5 @@
 package w4
 
-import "unsafe"
-
 //go:export blit
 func blit(sprite *byte, x, y, width, height, flags u8)
 
@@ -30,10 +28,10 @@ func textUtf8(text string, x, y u8)
 func tone(frequency, duration, volume uint32, flags u8)
 
 //go:export diskr
-func diskR(ptr unsafe.Pointer, count u8) u8
+func diskR(ptr *byte, count int) uint
 
 //go:export diskw
-func diskW(src unsafe.Pointer, count u8) u8
+func diskW(ptr *byte, count int) uint
 
 //go:export traceUtf8
 func trace(str string)

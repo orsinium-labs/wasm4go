@@ -174,3 +174,15 @@ func PlayTone(t Tone) {
 func Trace(text string) {
 	trace(text)
 }
+
+// Reads bytes from persistent storage into the buffer.
+//
+// Make sure the buffer has cap enough to fit the data.
+func Load(buf []byte) uint {
+	return diskR(&buf[0], len(buf))
+}
+
+// Writes bytes from the buffer into persistent storage.
+func Save(buf []byte) uint {
+	return diskW(&buf[0], len(buf))
+}
