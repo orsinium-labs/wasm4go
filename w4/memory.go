@@ -2,10 +2,14 @@ package w4
 
 import "unsafe"
 
+// The difference between absolute addresses and the starting point from which we slice it.
+// We cannot take the memory starting with 0 address because then Go treats it as nil pointer.
+var offset uintptr = 4
+
 // The wasm-4-controlled region of memory, from zero to the user data beginning.
 //
 // https://wasm4.org/docs/reference/memory#memory-map
-var memory = (*[6560]byte)(unsafe.Pointer(uintptr(0)))
+var memory = (*[6556]byte)(unsafe.Pointer(offset))
 
 // BGR888 color in the palette.
 type Color struct {
@@ -31,7 +35,7 @@ func (palette) Get(d DrawColor) Color {
 	if d == Transparent {
 		panic("can't get Transparent color")
 	}
-	start := 0x04 + uint((d-1)*4)
+	start := uint((d - 1) * 4)
 	return Color{
 		R: memory[start+3],
 		G: memory[start+2],
@@ -46,7 +50,7 @@ func (palette) Set(d DrawColor, c Color) {
 	if d == Transparent {
 		panic("can't change Transparent color")
 	}
-	start := 0x04 + uint((d-1)*4)
+	start := uint((d - 1) * 4)
 	memory[start+3] = byte(c.R)
 	memory[start+2] = byte(c.G)
 	memory[start+1] = byte(c.B)
@@ -77,22 +81,30 @@ type drawColors struct{}
 // The primary draw color.
 //
 // Used for fill color of shapes or the main color of text or line.
-func (drawColors) First() DrawColor { return DrawColor(memory[0x14] & 0x0f) }
+func (drawColors) First() DrawColor {
+	return DrawColor(memory[0x14-offset] & 0x0f)
+}
 
 // Set the primary draw color.
 //
 // Used for fill color of shapes or the main color of text or line.
-func (drawColors) SetFirst(c DrawColor) { memory[0x14] = (memory[0x14] & 0x0f) | byte(c) }
+func (drawColors) SetFirst(c DrawColor) {
+	memory[0x14] = (memory[0x14-offset] & 0x0f) | byte(c)
+}
 
 // The secondary draw color.
 //
 // Used for stroke color of shapes or the background color of text.
-func (drawColors) Second() DrawColor { return DrawColor(memory[0x14] & 0xf0 >> 4) }
+func (drawColors) Second() DrawColor {
+	return DrawColor(memory[0x14-offset] & 0xf0 >> 4)
+}
 
 // Set the secondary draw color.
 //
 // Used for stroke color of shapes or the background color of text.
-func (drawColors) SetSecond(c DrawColor) { memory[0x14] = (memory[0x14] & 0xf0) | byte(c<<4) }
+func (drawColors) SetSecond(c DrawColor) {
+	memory[0x14] = (memory[0x14-offset] & 0xf0) | byte(c<<4)
+}
 
 type gamepad uint
 
@@ -114,32 +126,25 @@ func (g gamepad) Up() bool { return memory[g]&64 != 0 }
 // Check if down button is currently pressent on the gamepad.
 func (g gamepad) Down() bool { return memory[g]&128 != 0 }
 
-// X     bool
-// Y     bool
-// Left  bool
-// Right bool
-// Up    bool
-// Down  bool
-
 // 4 gamepads, with each gamepad represented by a single byte.
 type gamepads [4]gamepad
 
-var Gamepads = gamepads{0x16, 0x17, 0x18, 0x19}
+var Gamepads = gamepads{0x12, 0x13, 0x14, 0x15}
 
 // Byte containing the mouse position and mouse buttons state.
 type mouse struct{}
 
 var Mouse = mouse{}
 
-func (mouse) X() u8 { return u8(memory[0x1a]) }
+func (mouse) X() u8 { return u8(memory[0x1a-offset]) }
 
-func (mouse) Y() u8 { return u8(memory[0x1c]) }
+func (mouse) Y() u8 { return u8(memory[0x1c-offset]) }
 
-func (mouse) Left() bool { return u8(memory[0x1e])&1 != 0 }
+func (mouse) Left() bool { return u8(memory[0x1e-offset])&1 != 0 }
 
-func (mouse) Right() bool { return u8(memory[0x1e])&2 != 0 }
+func (mouse) Right() bool { return u8(memory[0x1e-offset])&2 != 0 }
 
-func (mouse) Middle() bool { return u8(memory[0x1e])&4 != 0 }
+func (mouse) Middle() bool { return u8(memory[0x1e-offset])&4 != 0 }
 
 // Byte containing flags that modify WASM-4's operation. By default all flags are off.
 type systemFlags struct{}
@@ -148,17 +153,17 @@ var SystemFlags = systemFlags{}
 
 func (systemFlags) PreserveFrameBuffer(v bool) {
 	if v {
-		memory[0x1f] |= 0b1
+		memory[0x1f-offset] |= 0b1
 	} else {
-		memory[0x1f] &= 0b0
+		memory[0x1f-offset] &= 0b0
 	}
 }
 
 func (systemFlags) HideGamepadOverlay(v bool) {
 	if v {
-		memory[0x1f] |= 0b10
+		memory[0x1f-offset] |= 0b10
 	} else {
-		memory[0x1f] &= 0b01
+		memory[0x1f-offset] &= 0b01
 	}
 }
 
@@ -169,17 +174,17 @@ var NetPlay = netplay{}
 
 // Local player index (0 to 3).
 func (netplay) Player() u8 {
-	n := memory[0x20]
+	n := memory[0x20-offset]
 	return u8(n & 0b11)
 }
 
 // True if netplay is currently active.
 func (netplay) Active() bool {
-	n := memory[0x20]
+	n := memory[0x20-offset]
 	return n&0b100 != 0
 }
 
 // Array of 160x160 pixels, with each pixel packed into 2 bits (colors 0 to 3).
 type frameBuffer [6400]byte
 
-var FrameBuffer = memory[0xa0:]
+var FrameBuffer = memory[0xa0-offset:]
