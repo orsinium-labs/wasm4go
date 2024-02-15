@@ -7,27 +7,49 @@ import "unsafe"
 // https://wasm4.org/docs/reference/memory#memory-map
 var memory = (*[6560]byte)(unsafe.Pointer(uintptr(0)))
 
-type Color uint32
+// BGR888 color in the palette.
+type Color struct {
+	// Red channel, from 0 to 255.
+	R u8
 
-// 	return uint(c.R) | (uint(c.G) << 8) | (uint(c.B) << 24)
+	// Green channel, from 0 to 255.
+	G u8
+
+	// Blue channel, from 0 to 255.
+	B u8
+}
 
 // An array of 4 colors, each represented by a 32 bit integer.
 type palette struct{}
 
 var Palette = palette{}
 
+// Get a color from the palette.
+//
+// The passed DrawColor must not be Transparent.
 func (palette) Get(d DrawColor) Color {
 	if d == Transparent {
 		panic("can't get Transparent color")
 	}
-	// return Color(memory[0x04+uint(d-1)])
+	start := 0x04 + uint((d-1)*4)
+	return Color{
+		R: memory[start+3],
+		G: memory[start+2],
+		B: memory[start+1],
+	}
 }
 
+// Get a palette color.
+//
+// The passed DrawColor must not be Transparent.
 func (palette) Set(d DrawColor, c Color) {
 	if d == Transparent {
 		panic("can't change Transparent color")
 	}
-	// memory[0x04+uint(d-1)] = c
+	start := 0x04 + uint((d-1)*4)
+	memory[start+3] = byte(c.R)
+	memory[start+2] = byte(c.G)
+	memory[start+1] = byte(c.B)
 }
 
 type DrawColor u8
