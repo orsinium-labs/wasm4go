@@ -1,0 +1,14 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  build:
+    - tinygo build -size short -target wasm-unknown -gc=leaking .
+    # - wasm-opt -Oz -o hello.wasm hello.wasm
+  run:
+    - task: build
+    - w4 run-native ./hello.wasm
