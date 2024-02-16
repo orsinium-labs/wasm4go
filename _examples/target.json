@@ -1,15 +1,19 @@
 {
   "llvm-target": "wasm32-unknown-unknown",
+  "cpu": "generic",
+  "features": "+mutable-globals,+nontrapping-fptoint,+sign-ext,+bulk-memory",
   "build-tags": ["tinygo.wasm", "wasm_unknown"],
   "goos": "linux",
   "goarch": "arm",
   "linker": "wasm-ld",
+  "rtlib": "compiler-rt",
+  "scheduler": "none",
+  "cflags": ["-mno-bulk-memory", "-mnontrapping-fptoint", "-msign-ext"],
   "ldflags": [
     "--allow-undefined",
     "--no-demangle",
-    "--import-memory",
-    "--initial-memory=65536",
-    "--max-memory=65536",
+    "--initial-memory=131072",
+    "--max-memory=131072",
     "--stack-first",
     "-zstack-size=14752"
   ]

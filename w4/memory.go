@@ -80,6 +80,14 @@ type drawColors struct{}
 
 var DrawColors = drawColors{}
 
+// Set all four draw colors.
+func (drawColors) Set(c1, c2, c3, c4 DrawColor) {
+	DrawColors.SetFirst(c1)
+	DrawColors.SetSecond(c2)
+	DrawColors.SetThird(c3)
+	DrawColors.SetFourth(c4)
+}
+
 // The primary draw color.
 //
 // Used for fill color of shapes or the main color of text or line.
@@ -106,6 +114,20 @@ func (drawColors) Second() DrawColor {
 // Used for stroke color of shapes or the background color of text.
 func (drawColors) SetSecond(c DrawColor) {
 	memory[0x14-offset] = (memory[0x14-offset] & 0x0f) | byte(c<<4)
+}
+
+// Set the third draw color.
+//
+// Used only by 2BPP blit images.
+func (drawColors) SetThird(c DrawColor) {
+	memory[0x15-offset] = (memory[0x14-offset] & 0xf0) | byte(c)
+}
+
+// Set the third draw color.
+//
+// Used only by 2BPP blit images.
+func (drawColors) SetFourth(c DrawColor) {
+	memory[0x15-offset] = (memory[0x14-offset] & 0x0f) | byte(c<<4)
 }
 
 type gamepad uint
