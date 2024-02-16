@@ -37,9 +37,9 @@ func (palette) Get(d DrawColor) Color {
 	}
 	start := uint((d - 1) * 4)
 	return Color{
-		R: memory[start+3],
-		G: memory[start+2],
-		B: memory[start+1],
+		R: memory[start+2],
+		G: memory[start+1],
+		B: memory[start+0],
 	}
 }
 
@@ -51,9 +51,9 @@ func (palette) Set(d DrawColor, c Color) {
 		panic("can't change Transparent color")
 	}
 	start := uint((d - 1) * 4)
-	memory[start+3] = byte(c.R)
-	memory[start+2] = byte(c.G)
-	memory[start+1] = byte(c.B)
+	memory[start+2] = byte(c.R)
+	memory[start+1] = byte(c.G)
+	memory[start+0] = byte(c.B)
 }
 
 type DrawColor u8
@@ -78,6 +78,8 @@ const (
 // Indexes into the color palette used by all drawing functions.
 type drawColors struct{}
 
+var DrawColors = drawColors{}
+
 // The primary draw color.
 //
 // Used for fill color of shapes or the main color of text or line.
@@ -89,7 +91,7 @@ func (drawColors) First() DrawColor {
 //
 // Used for fill color of shapes or the main color of text or line.
 func (drawColors) SetFirst(c DrawColor) {
-	memory[0x14] = (memory[0x14-offset] & 0x0f) | byte(c)
+	memory[0x14-offset] = (memory[0x14-offset] & 0xf0) | byte(c)
 }
 
 // The secondary draw color.
@@ -103,7 +105,7 @@ func (drawColors) Second() DrawColor {
 //
 // Used for stroke color of shapes or the background color of text.
 func (drawColors) SetSecond(c DrawColor) {
-	memory[0x14] = (memory[0x14-offset] & 0xf0) | byte(c<<4)
+	memory[0x14-offset] = (memory[0x14-offset] & 0x0f) | byte(c<<4)
 }
 
 type gamepad uint
@@ -127,7 +129,7 @@ func (g gamepad) Up() bool { return memory[g]&64 != 0 }
 func (g gamepad) Down() bool { return memory[g]&128 != 0 }
 
 // 4 gamepads, with each gamepad represented by a single byte.
-type gamepads [4]gamepad
+type gamepads []gamepad
 
 var Gamepads = gamepads{0x12, 0x13, 0x14, 0x15}
 

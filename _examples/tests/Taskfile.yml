@@ -6,4 +6,5 @@ tasks:
     - tinygo build -size short -target wasm-unknown -gc=leaking .
   run:
     - task: build
-    - w4 run-native ./hello.wasm
+    - wasm2wat --generate-names ./tests.wasm
+    - w4 run-native ./tests.wasm
