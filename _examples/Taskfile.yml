@@ -1,0 +1,16 @@
+# https://taskfile.dev
+version: '3'
+
+tasks:
+  build:
+    - test {{.CLI_ARGS}}
+    - >
+      tinygo build
+      -size short
+      -target wasm-unknown
+      -gc=leaking
+      -o cart.wasm
+      {{.CLI_ARGS}}
+  run:
+    - task: build
+    - w4 run-native ./cart.wasm
