@@ -1,0 +1,16 @@
+{
+  "llvm-target": "wasm32-unknown-unknown",
+  "build-tags": ["tinygo.wasm", "wasm_unknown"],
+  "goos": "linux",
+  "goarch": "arm",
+  "linker": "wasm-ld",
+  "ldflags": [
+    "--allow-undefined",
+    "--no-demangle",
+    "--import-memory",
+    "--initial-memory=65536",
+    "--max-memory=65536",
+    "--stack-first",
+    "-zstack-size=14752"
+  ]
+}

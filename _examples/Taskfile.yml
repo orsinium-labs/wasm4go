@@ -6,10 +6,9 @@ tasks:
     - test {{.CLI_ARGS}}
     - >
       tinygo build
-      -size short
-      -target wasm-unknown
-      -gc=leaking
-      -o cart.wasm
+      -target ./target.json
+      -gc     leaking
+      -o      cart.wasm
       {{.CLI_ARGS}}
   run:
     - task: build
