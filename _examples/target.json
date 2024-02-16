@@ -12,8 +12,8 @@
   "ldflags": [
     "--allow-undefined",
     "--no-demangle",
-    "--initial-memory=131072",
-    "--max-memory=131072",
+    "--initial-memory=65536",
+    "--max-memory=65536",
     "--stack-first",
     "-zstack-size=14752"
   ]
