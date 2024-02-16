@@ -16,6 +16,7 @@ func assert(x bool) {
 }
 
 func start() {
+	testDraw()
 	testMemory()
 }
 
@@ -65,6 +66,28 @@ func testMemory() {
 	assert(w4.DrawColors.Second() == w4.Transparent)
 	w4.DrawColors.SetSecond(w4.Light)
 	assert(w4.DrawColors.Second() == w4.Light)
+}
+
+func testDraw() {
+	for _, b := range w4.FrameBuffer[:500] {
+		assert(b == 0)
+	}
+
+	// chack that horizontal line modifies the framebuffer as expected
+	w4.DrawHorLine(w4.Point{X: 0, Y: 0}, 10)
+	assert(w4.FrameBuffer[0] == 0b1010_1010)
+	assert(w4.FrameBuffer[1] == 0b1010_1010)
+	assert(w4.FrameBuffer[2] == 0b0000_1010)
+	assert(w4.FrameBuffer[3] == 0b0000_0000)
+
+	// smoke test the rest of the drawing functions
+	w4.DrawHorLine(w4.Point{X: 10, Y: 20}, 30)
+	w4.DrawVertLine(w4.Point{X: 10, Y: 20}, 30)
+	w4.DrawLine(w4.Point{X: 10, Y: 20}, w4.Point{X: 30, Y: 40})
+	w4.DrawEllipse(w4.Point{X: 50, Y: 60}, w4.Size{10, 20})
+	w4.DrawRect(w4.Point{X: 50, Y: 60}, w4.Size{10, 20})
+	w4.DrawText("Test me!", w4.Point{X: 50, Y: 60})
+	w4.Trace("hi terminal")
 }
 
 func update() {
