@@ -1,12 +1,17 @@
 package main
 
-import "github.com/orsinium-labs/wasm4go/w4"
+import (
+	"math/rand"
+
+	"github.com/orsinium-labs/wasm4go/w4"
+)
 
 var (
 	snake       = &Snake{}
 	frameCount  = 0
 	fruit       = w4.Point{X: 10, Y: 10}
 	fruitSprite = []byte{0x00, 0xa0, 0x02, 0x00, 0x0e, 0xf0, 0x36, 0x5c, 0xd6, 0x57, 0xd5, 0x57, 0x35, 0x5c, 0x0f, 0xf0}
+	rnd         = rand.New(rand.NewSource(1)).Intn
 )
 
 func main() {
@@ -54,8 +59,8 @@ func update() {
 
 		if snake.Body[0] == fruit {
 			snake.Body = append(snake.Body, snake.Body[len(snake.Body)-1])
-			fruit.X = 20
-			fruit.Y = 20
+			fruit.X = uint8(rnd(20))
+			fruit.Y = uint8(rnd(20))
 		}
 	}
 	snake.Draw()

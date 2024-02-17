@@ -43,9 +43,9 @@ func (palette) Get(d DrawColor) Color {
 	}
 }
 
-// Get a palette color.
+// Set all 4 colors of the color palette.
 //
-// The passed DrawColor must not be Transparent.
+// https://wasm4.org/docs/guides/basic-drawing/#the-palette-register
 func (palette) Set(c1, c2, c3, c4 Color) {
 	for i, c := range [4]Color{c1, c2, c3, c4} {
 		start := uint(i * 4)
