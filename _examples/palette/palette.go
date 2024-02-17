@@ -8,10 +8,12 @@ func main() {
 
 func update() {
 	// Set the palette to black-red-green-blue
-	w4.Palette.Set(1, w4.Color{R: 0x00, G: 0x00, B: 0x00})
-	w4.Palette.Set(2, w4.Color{R: 0xff, G: 0x00, B: 0x00})
-	w4.Palette.Set(3, w4.Color{R: 0x00, G: 0xff, B: 0x00})
-	w4.Palette.Set(4, w4.Color{R: 0x00, G: 0x00, B: 0xff})
+	w4.Palette.Set(
+		w4.Color{R: 0x00, G: 0x00, B: 0x00},
+		w4.Color{R: 0xff, G: 0x00, B: 0x00},
+		w4.Color{R: 0x00, G: 0xff, B: 0x00},
+		w4.Color{R: 0x00, G: 0x00, B: 0xff},
+	)
 
 	// disable outline color
 	w4.DrawColors.SetSecond(w4.Transparent)

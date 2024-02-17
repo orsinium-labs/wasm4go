@@ -31,11 +31,12 @@ func input() {
 }
 
 func start() {
-	w4.Palette.Set(1, w4.Color{R: 0xf3, G: 0xf7, B: 0xfb})
-	w4.Palette.Set(2, w4.Color{R: 0x83, G: 0xb0, B: 0xe5})
-	w4.Palette.Set(3, w4.Color{R: 0x5d, G: 0x6e, B: 0x42})
-	w4.Palette.Set(4, w4.Color{R: 0x3d, G: 0x28, B: 0x20})
-
+	w4.Palette.Set(
+		w4.Color{R: 0xfb, G: 0xf7, B: 0xf3},
+		w4.Color{R: 0xe5, G: 0xb0, B: 0x83},
+		w4.Color{R: 0x42, G: 0x6e, B: 0x5d},
+		w4.Color{R: 0x20, G: 0x28, B: 0x3d},
+	)
 	snake.Reset()
 }
 
@@ -59,7 +60,7 @@ func update() {
 	}
 	snake.Draw()
 
-	w4.DrawColors.Set(w4.Transparent, w4.Primary, w4.Secondary, w4.Dark)
+	w4.DrawColors.Set(w4.Light, w4.Primary, w4.Secondary, w4.Dark)
 	w4.Blit(fruitSprite, w4.Point{X: fruit.X * 8, Y: fruit.Y * 8}, w4.Size{Width: 8, Height: 8}, w4.TwoBPP)
 }
 

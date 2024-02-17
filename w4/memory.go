@@ -46,14 +46,13 @@ func (palette) Get(d DrawColor) Color {
 // Get a palette color.
 //
 // The passed DrawColor must not be Transparent.
-func (palette) Set(d DrawColor, c Color) {
-	if d == Transparent {
-		panic("can't change Transparent color")
+func (palette) Set(c1, c2, c3, c4 Color) {
+	for i, c := range [4]Color{c1, c2, c3, c4} {
+		start := uint(i * 4)
+		memory[start+2] = byte(c.R)
+		memory[start+1] = byte(c.G)
+		memory[start+0] = byte(c.B)
 	}
-	start := uint((d - 1) * 4)
-	memory[start+2] = byte(c.R)
-	memory[start+1] = byte(c.G)
-	memory[start+0] = byte(c.B)
 }
 
 type DrawColor u8
@@ -120,14 +119,14 @@ func (drawColors) SetSecond(c DrawColor) {
 //
 // Used only by 2BPP blit images.
 func (drawColors) SetThird(c DrawColor) {
-	memory[0x15-offset] = (memory[0x14-offset] & 0xf0) | byte(c)
+	memory[0x15-offset] = (memory[0x15-offset] & 0xf0) | byte(c)
 }
 
 // Set the third draw color.
 //
 // Used only by 2BPP blit images.
 func (drawColors) SetFourth(c DrawColor) {
-	memory[0x15-offset] = (memory[0x14-offset] & 0x0f) | byte(c<<4)
+	memory[0x15-offset] = (memory[0x15-offset] & 0x0f) | byte(c<<4)
 }
 
 type gamepad uint
