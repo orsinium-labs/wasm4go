@@ -20,14 +20,16 @@ func start() {
 
 func testMemory() {
 	// palette
-	w4.Palette.Set(w4.Light, w4.Color{R: 45, G: 56, B: 67})
+	w4.Palette.Set(
+		w4.Color{R: 45, G: 56, B: 67},
+		w4.Color{R: 7, G: 8, B: 9},
+		w4.Color{R: 11, G: 12, B: 13},
+		w4.Color{R: 3, G: 4, B: 5},
+	)
 	assert(w4.Palette.Get(w4.Light) == w4.Color{R: 45, G: 56, B: 67})
-	w4.Palette.Set(w4.Dark, w4.Color{R: 3, G: 4, B: 5})
-	assert(w4.Palette.Get(w4.Dark) == w4.Color{R: 3, G: 4, B: 5})
-	w4.Palette.Set(w4.Primary, w4.Color{R: 7, G: 8, B: 9})
 	assert(w4.Palette.Get(w4.Primary) == w4.Color{R: 7, G: 8, B: 9})
-	w4.Palette.Set(w4.Secondary, w4.Color{R: 11, G: 12, B: 13})
 	assert(w4.Palette.Get(w4.Secondary) == w4.Color{R: 11, G: 12, B: 13})
+	assert(w4.Palette.Get(w4.Dark) == w4.Color{R: 3, G: 4, B: 5})
 
 	// netplay
 	assert(!w4.NetPlay.Active())
@@ -82,10 +84,10 @@ func testDraw() {
 	w4.DrawHorLine(w4.Point{X: 10, Y: 20}, 30)
 	w4.DrawVertLine(w4.Point{X: 10, Y: 20}, 30)
 	w4.DrawLine(w4.Point{X: 10, Y: 20}, w4.Point{X: 30, Y: 40})
-	w4.DrawEllipse(w4.Point{X: 50, Y: 60}, w4.Size{10, 20})
-	w4.DrawRect(w4.Point{X: 50, Y: 60}, w4.Size{10, 20})
+	w4.DrawEllipse(w4.Point{X: 50, Y: 60}, w4.Size{Width: 10, Height: 20})
+	w4.DrawRect(w4.Point{X: 50, Y: 60}, w4.Size{Width: 10, Height: 20})
 	w4.DrawText("Test me!", w4.Point{X: 50, Y: 60})
-	w4.Trace("hi terminal")
+	w4.Trace("all tests have passed")
 }
 
 func update() {
