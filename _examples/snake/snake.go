@@ -52,6 +52,11 @@ func input() {
 	if g.Right() {
 		snake.Right()
 	}
+	// If any button is pressed, advance the randomization function state.
+	// It ensures that the fruits' placement is always different for each game.
+	if g.Any() {
+		randInt(20)
+	}
 }
 
 func start() {

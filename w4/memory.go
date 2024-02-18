@@ -131,23 +131,26 @@ func (drawColors) SetFourth(c DrawColor) {
 
 type gamepad uint
 
-// Check if X button is currently pressent on the gamepad.
+// Check if X button is currently pressed on the gamepad.
 func (g gamepad) X() bool { return memory[g]&1 != 0 }
 
-// Check if Z button is currently pressent on the gamepad.
+// Check if Z button is currently pressed on the gamepad.
 func (g gamepad) Z() bool { return memory[g]&2 != 0 }
 
-// Check if left button is currently pressent on the gamepad.
+// Check if left button is currently pressed on the gamepad.
 func (g gamepad) Left() bool { return memory[g]&16 != 0 }
 
-// Check if right button is currently pressent on the gamepad.
+// Check if right button is currently pressed on the gamepad.
 func (g gamepad) Right() bool { return memory[g]&32 != 0 }
 
-// Check if up button is currently pressent on the gamepad.
+// Check if up button is currently pressed on the gamepad.
 func (g gamepad) Up() bool { return memory[g]&64 != 0 }
 
-// Check if down button is currently pressent on the gamepad.
+// Check if down button is currently pressed on the gamepad.
 func (g gamepad) Down() bool { return memory[g]&128 != 0 }
+
+// Check if any button is currently pressed on the gamepad.
+func (g gamepad) Any() bool { return memory[g] != 0 }
 
 // 4 gamepads, with each gamepad represented by a single byte.
 type gamepads []gamepad
