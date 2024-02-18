@@ -6,12 +6,14 @@ import (
 	"github.com/orsinium-labs/wasm4go/w4"
 )
 
+const size = 8
+
 var (
 	snake       = &Snake{}
 	frameCount  = 0
-	fruit       = w4.Point{X: 10, Y: 10}
+	fruit       = w4.Point{X: 80, Y: 80}
 	fruitSprite = []byte{0x00, 0xa0, 0x02, 0x00, 0x0e, 0xf0, 0x36, 0x5c, 0xd6, 0x57, 0xd5, 0x57, 0x35, 0x5c, 0x0f, 0xf0}
-	rnd         = rand.New(rand.NewSource(1)).Intn
+	randInt     = rand.New(rand.NewSource(1)).Intn
 )
 
 func main() {
@@ -59,14 +61,14 @@ func update() {
 
 		if snake.Body[0] == fruit {
 			snake.Body = append(snake.Body, snake.Body[len(snake.Body)-1])
-			fruit.X = uint8(rnd(20))
-			fruit.Y = uint8(rnd(20))
+			fruit.X = uint8(randInt(20) * size)
+			fruit.Y = uint8(randInt(20) * size)
 		}
 	}
 	snake.Draw()
 
 	w4.DrawColors.Set(w4.Light, w4.Primary, w4.Secondary, w4.Dark)
-	w4.Blit(fruitSprite, w4.Point{X: fruit.X * 8, Y: fruit.Y * 8}, w4.Size{Width: 8, Height: 8}, w4.TwoBPP)
+	w4.Blit(fruitSprite, fruit, w4.Size{Width: size, Height: size}, w4.TwoBPP)
 }
 
 type Direction struct {
@@ -81,26 +83,25 @@ type Snake struct {
 
 func (s *Snake) Reset() {
 	s.Body = []w4.Point{
-		{X: 2, Y: 0},
-		{X: 1, Y: 0},
+		{X: size * 2, Y: 0},
+		{X: size, Y: 0},
 		{X: 0, Y: 0},
 	}
-	s.Direction = Direction{X: 1, Y: 0}
+	s.Direction = Direction{X: size, Y: 0}
 }
 
 func (s *Snake) Draw() {
-	// *w4.DRAW_COLORS = 0x0043
 	w4.DrawColors.SetFirst(w4.Secondary)
 	w4.DrawColors.SetSecond(w4.Dark)
-	size := w4.Size{Width: 8, Height: 8}
+	rsize := w4.Size{Width: size, Height: size}
 	for _, part := range s.Body {
-		w4.DrawRect(w4.Point{X: part.X * 8, Y: part.Y * 8}, size)
+		w4.DrawRect(part, rsize)
 	}
 
 	w4.DrawColors.SetFirst(w4.Dark)
 	w4.DrawColors.SetSecond(w4.Transparent)
 	head := s.Body[0]
-	w4.DrawRect(w4.Point{X: head.X * 8, Y: head.Y * 8}, size)
+	w4.DrawRect(head, rsize)
 }
 
 func (s *Snake) Update() {
@@ -108,42 +109,42 @@ func (s *Snake) Update() {
 		s.Body[i] = s.Body[i-1]
 	}
 
-	s.Body[0].X = uint8((int(s.Body[0].X) + s.Direction.X) % 20)
-	s.Body[0].Y = uint8((int(s.Body[0].Y) + s.Direction.Y) % 20)
+	s.Body[0].X = uint8((int(s.Body[0].X) + s.Direction.X) % 160)
+	s.Body[0].Y = uint8((int(s.Body[0].Y) + s.Direction.Y) % 160)
 	if s.Body[0].X < 0 {
-		s.Body[0].X = 19
+		s.Body[0].X = 160 - size
 	}
 	if s.Body[0].Y < 0 {
-		s.Body[0].Y = 19
+		s.Body[0].Y = 160 - size
 	}
 }
 
 func (s *Snake) Up() {
 	if s.Direction.Y == 0 {
-		s.Direction.X, s.Direction.Y = 0, -1
+		s.Direction.X, s.Direction.Y = 0, -size
 	}
 }
 
 func (s *Snake) Down() {
 	if s.Direction.Y == 0 {
-		s.Direction.X, s.Direction.Y = 0, 1
+		s.Direction.X, s.Direction.Y = 0, size
 	}
 }
 
 func (s *Snake) Left() {
 	if s.Direction.X == 0 {
-		s.Direction.X, s.Direction.Y = -1, 0
+		s.Direction.X, s.Direction.Y = -size, 0
 	}
 }
 
 func (s *Snake) Right() {
 	if s.Direction.X == 0 {
-		s.Direction.X, s.Direction.Y = 1, 0
+		s.Direction.X, s.Direction.Y = size, 0
 	}
 }
 
 func (s *Snake) IsDead() bool {
-	for index := 1; index < len(s.Body)-1; index++ {
+	for index := 1; index < len(s.Body)-size; index++ {
 		if s.Body[0] == s.Body[index] {
 			return true
 		}
