@@ -19,15 +19,25 @@ var (
 	// The fruit position. Place the first one in the center of the screen.
 	fruit = w4.Point{X: 80, Y: 80}
 
+	// The raw binary content of a sprite for the fruit.
+	// A nicer solution would be to use go:embed but it doesn't work with wasm target.
 	fruitSprite = []byte{0x00, 0xa0, 0x02, 0x00, 0x0e, 0xf0, 0x36, 0x5c, 0xd6, 0x57, 0xd5, 0x57, 0x35, 0x5c, 0x0f, 0xf0}
-	randInt     = rand.New(rand.NewSource(1)).Intn
+
+	// Randomization function for placing the fruit.
+	// We can't use a global random instance because there is no way to make a global
+	// random seed in pure wasm.
+	randInt = rand.New(rand.NewSource(1)).Intn
 )
 
 func main() {
+	// Set the function to be called on start.
 	w4.Start = start
+
+	// Set the function to be called on each frame update.
 	w4.Update = update
 }
 
+// Update the snake direction based on the buttons pressed on the gamepad.
 func input() {
 	g := w4.Gamepads[0]
 	if g.Up() {
@@ -62,11 +72,15 @@ func start() {
 func update() {
 	input()
 	frameCount++
+	// Skip every 10th frame so that the snake doesn't move too fast
 	if frameCount%10 == 0 {
 		snake.Update()
+		// If snake eats itself, reset it to the initial state.
 		if snake.IsDead() {
 			snake.Reset()
 		}
+		// If the snake's head is on the tile with the fruit,
+		// increase the snake's length and update the fruit's position.
 		if snake.Body[0] == fruit {
 			snake.Body = append(snake.Body, snake.Body[len(snake.Body)-1])
 			fruit.X = uint8(randInt(20) * size)
@@ -74,6 +88,7 @@ func update() {
 		}
 	}
 	snake.Draw()
+	// Draw the fruit.
 	w4.DrawColors.Set(w4.Light, w4.Primary, w4.Secondary, w4.Dark)
 	w4.Blit(fruitSprite, fruit, w4.Size{Width: size, Height: size}, w4.TwoBPP)
 }
@@ -88,6 +103,7 @@ type Snake struct {
 	Direction Direction
 }
 
+// Place the snake at the start with 3-segment length and moving to the right.
 func (s *Snake) Reset() {
 	s.Body = []w4.Point{
 		{X: size * 2, Y: 0},
@@ -97,7 +113,9 @@ func (s *Snake) Reset() {
 	s.Direction = Direction{X: size, Y: 0}
 }
 
+// Draw the snake's body
 func (s *Snake) Draw() {
+	// Draw green rectangles with blue outline for body segments.
 	w4.DrawColors.SetFirst(w4.Secondary)
 	w4.DrawColors.SetSecond(w4.Dark)
 	rsize := w4.Size{Width: size, Height: size}
@@ -105,6 +123,7 @@ func (s *Snake) Draw() {
 		w4.DrawRect(part, rsize)
 	}
 
+	// Draw blue rectangle for the head.
 	w4.DrawColors.SetFirst(w4.Dark)
 	w4.DrawColors.SetSecond(w4.Transparent)
 	head := s.Body[0]
@@ -112,13 +131,16 @@ func (s *Snake) Draw() {
 }
 
 func (s *Snake) Update() {
+	// Shift the snake's segments
 	for i := len(s.Body) - 1; i > 0; i-- {
 		s.Body[i] = s.Body[i-1]
 	}
 
+	// Shift the snake's head in the movement direction,
+	// wrapping it around the screen if necessary.
 	s.Body[0].X = uint8((int(s.Body[0].X) + s.Direction.X) % 160)
 	s.Body[0].Y = uint8((int(s.Body[0].Y) + s.Direction.Y) % 160)
-	// It is more than 160 if the integer overflows
+	// It is more than 160 if the integer overflows.
 	if s.Body[0].X > 160 {
 		s.Body[0].X = 160 - size
 	}
@@ -151,8 +173,9 @@ func (s *Snake) Right() {
 	}
 }
 
+// Check if the snake's head is on the same position as one of its segments.
 func (s *Snake) IsDead() bool {
-	for index := 1; index < len(s.Body)-size; index++ {
+	for index := 1; index < len(s.Body); index++ {
 		if s.Body[0] == s.Body[index] {
 			return true
 		}
