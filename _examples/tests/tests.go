@@ -59,13 +59,9 @@ func testMemory() {
 	}
 
 	// draw colors
-	assert(w4.DrawColors.First() == w4.Secondary)
-	assert(w4.DrawColors.Second() == w4.Transparent)
-	w4.DrawColors.SetFirst(w4.Dark)
-	assert(w4.DrawColors.First() == w4.Dark)
-	assert(w4.DrawColors.Second() == w4.Transparent)
-	w4.DrawColors.SetSecond(w4.Light)
-	assert(w4.DrawColors.Second() == w4.Light)
+	w4.DrawColors.SetPrimary(w4.Dark)
+	w4.DrawColors.SetSecondary(w4.Light)
+	w4.DrawColors.Set(w4.Dark, w4.Light, w4.Primary, w4.Secondary)
 }
 
 func testDraw() {

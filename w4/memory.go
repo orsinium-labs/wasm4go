@@ -80,53 +80,30 @@ type drawColors struct{}
 var DrawColors = drawColors{}
 
 // Set all four draw colors.
-func (drawColors) Set(c1, c2, c3, c4 DrawColor) {
-	DrawColors.SetFirst(c1)
-	DrawColors.SetSecond(c2)
-	DrawColors.SetThird(c3)
-	DrawColors.SetFourth(c4)
-}
-
-// The primary draw color.
 //
-// Used for fill color of shapes or the main color of text or line.
-func (drawColors) First() DrawColor {
-	return DrawColor(memory[0x14-offset] & 0x0f)
+// Used for drawing [TwoBPP] sprites with [Blit] and [BlitSub].
+//
+// For 1BPP images and other drawing functions consider using
+// [SetPrimary] and [SetSecondary] instead.
+func (drawColors) Set(c1, c2, c3, c4 DrawColor) {
+	DrawColors.SetPrimary(c1)
+	DrawColors.SetSecondary(c2)
+	memory[0x15-offset] = (memory[0x15-offset] & 0xf0) | byte(c3)
+	memory[0x15-offset] = (memory[0x15-offset] & 0x0f) | byte(c4<<4)
 }
 
 // Set the primary draw color.
 //
 // Used for fill color of shapes or the main color of text or line.
-func (drawColors) SetFirst(c DrawColor) {
+func (drawColors) SetPrimary(c DrawColor) {
 	memory[0x14-offset] = (memory[0x14-offset] & 0xf0) | byte(c)
-}
-
-// The secondary draw color.
-//
-// Used for stroke color of shapes or the background color of text.
-func (drawColors) Second() DrawColor {
-	return DrawColor(memory[0x14-offset] & 0xf0 >> 4)
 }
 
 // Set the secondary draw color.
 //
 // Used for stroke color of shapes or the background color of text.
-func (drawColors) SetSecond(c DrawColor) {
+func (drawColors) SetSecondary(c DrawColor) {
 	memory[0x14-offset] = (memory[0x14-offset] & 0x0f) | byte(c<<4)
-}
-
-// Set the third draw color.
-//
-// Used only by 2BPP blit images.
-func (drawColors) SetThird(c DrawColor) {
-	memory[0x15-offset] = (memory[0x15-offset] & 0xf0) | byte(c)
-}
-
-// Set the third draw color.
-//
-// Used only by 2BPP blit images.
-func (drawColors) SetFourth(c DrawColor) {
-	memory[0x15-offset] = (memory[0x15-offset] & 0x0f) | byte(c<<4)
 }
 
 type gamepad uint
