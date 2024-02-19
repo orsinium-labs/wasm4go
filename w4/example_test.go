@@ -59,3 +59,35 @@ func ExampleLoad() {
 	data := make([]byte, 1024)
 	w4.Load(data)
 }
+
+func ExampleColor() {
+	w4.Palette.Set(
+		w4.Color{R: 0xfb, G: 0xf7, B: 0xf3},
+		w4.Color{R: 0xe5, G: 0xb0, B: 0x83},
+		w4.Color{R: 0x42, G: 0x6e, B: 0x5d},
+		w4.Color{R: 0x20, G: 0x28, B: 0x3d},
+	)
+}
+
+func ExamplePalette() {
+	w4.Palette.Set(
+		w4.Color{R: 0xfb, G: 0xf7, B: 0xf3},
+		w4.Color{R: 0xe5, G: 0xb0, B: 0x83},
+		w4.Color{R: 0x42, G: 0x6e, B: 0x5d},
+		w4.Color{R: 0x20, G: 0x28, B: 0x3d},
+	)
+}
+
+func ExampleGamepads() {
+	g := w4.Gamepads[0]
+	if g.X() {
+		// the X button is pressed
+	}
+}
+
+func ExampleDrawColors() {
+	w4.DrawColors.SetPrimary(w4.Secondary)
+	w4.DrawColors.SetSecondary(w4.Dark)
+	size := w4.Size{Width: 20, Height: 20}
+	w4.DrawRect(w4.Point{X: 10, Y: 10}, size)
+}
