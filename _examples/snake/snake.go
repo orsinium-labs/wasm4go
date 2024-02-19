@@ -121,16 +121,16 @@ func (s *Snake) Reset() {
 // Draw the snake's body
 func (s *Snake) Draw() {
 	// Draw green rectangles with blue outline for body segments.
-	w4.DrawColors.SetFirst(w4.Secondary)
-	w4.DrawColors.SetSecond(w4.Dark)
+	w4.DrawColors.SetPrimary(w4.Secondary)
+	w4.DrawColors.SetSecondary(w4.Dark)
 	rsize := w4.Size{Width: size, Height: size}
 	for _, part := range s.Body {
 		w4.DrawRect(part, rsize)
 	}
 
 	// Draw blue rectangle for the head.
-	w4.DrawColors.SetFirst(w4.Dark)
-	w4.DrawColors.SetSecond(w4.Transparent)
+	w4.DrawColors.SetPrimary(w4.Dark)
+	w4.DrawColors.SetSecondary(w4.Transparent)
 	head := s.Body[0]
 	w4.DrawRect(head, rsize)
 }
