@@ -23,9 +23,12 @@ type Color struct {
 	B u8
 }
 
-// An array of 4 colors, each represented by a 32 bit integer.
 type palette struct{}
 
+// Set of 4 colors used to render the current frame buffer on the screen.
+//
+// Which colors from the palette are used to draw a specific element
+// is controlled by [DrawColors].
 var Palette = palette{}
 
 // Get a color from the palette.
@@ -55,10 +58,13 @@ func (palette) Set(c1, c2, c3, c4 Color) {
 	}
 }
 
+// A color from the palette used bu draw functions.
 type DrawColor u8
 
 const (
-	// Do not draw this color
+	// Do not draw this color.
+	//
+	// Can be used to draw shapes without fill or without outline.
 	Transparent DrawColor = 0
 
 	// The 1st color in the palette. Usually a very light, almost white, color.
@@ -74,9 +80,9 @@ const (
 	Dark DrawColor = 4
 )
 
-// Indexes into the color palette used by all drawing functions.
 type drawColors struct{}
 
+// Defines which colors from the palette should be used by the draw functions.
 var DrawColors = drawColors{}
 
 // Set all four draw colors.
@@ -132,28 +138,41 @@ func (g gamepad) Any() bool { return memory[g] != 0 }
 // 4 gamepads, with each gamepad represented by a single byte.
 type gamepads []gamepad
 
+// And array of 4 gamepads.
+//
+//   - The first one is always available and is the local player.
+//   - The second one can be either a local hotseat player or a remote one.
+//   - Gamepads 3 and 4 are always remote players.
 var Gamepads = gamepads{0x12, 0x13, 0x14, 0x15}
 
-// Byte containing the mouse position and mouse buttons state.
 type mouse struct{}
 
+// The mouse position and mouse buttons (left, right, and middle) state.
 var Mouse = mouse{}
 
+// X coordinate of the mouse cursor on the display.
 func (mouse) X() u8 { return u8(memory[0x1a-offset]) }
 
+// Y coordinate of the mouse cursor on the display.
 func (mouse) Y() u8 { return u8(memory[0x1c-offset]) }
 
+// If the left mouse button is currently pressed.
 func (mouse) Left() bool { return u8(memory[0x1e-offset])&1 != 0 }
 
+// If the right mouse button is currently pressed.
 func (mouse) Right() bool { return u8(memory[0x1e-offset])&2 != 0 }
 
+// If the middle mouse button is currently pressed.
 func (mouse) Middle() bool { return u8(memory[0x1e-offset])&4 != 0 }
 
-// Byte containing flags that modify WASM-4's operation. By default all flags are off.
 type systemFlags struct{}
 
+// Flags that modify WASM-4's operation.
+//
+// By default all flags are off.
 var SystemFlags = systemFlags{}
 
+// Do not reset the frame buffer after each update.
 func (systemFlags) PreserveFrameBuffer(v bool) {
 	if v {
 		memory[0x1f-offset] |= 0b1
@@ -162,6 +181,7 @@ func (systemFlags) PreserveFrameBuffer(v bool) {
 	}
 }
 
+// Do not show gamepad overlay on mobile.
 func (systemFlags) HideGamepadOverlay(v bool) {
 	if v {
 		memory[0x1f-offset] |= 0b10
@@ -170,9 +190,9 @@ func (systemFlags) HideGamepadOverlay(v bool) {
 	}
 }
 
-// Byte containing netplay multiplayer state.
 type netplay struct{}
 
+// Multiplayer state.
 var NetPlay = netplay{}
 
 // Local player index (0 to 3).
@@ -181,13 +201,13 @@ func (netplay) Player() u8 {
 	return u8(n & 0b11)
 }
 
-// True if netplay is currently active.
+// If netplay is currently active.
 func (netplay) Active() bool {
 	n := memory[0x20-offset]
 	return n&0b100 != 0
 }
 
-// Array of 160x160 pixels, with each pixel packed into 2 bits (colors 0 to 3).
 type frameBuffer [6400]byte
 
+// Array of 160x160 pixels, with each pixel packed into 2 bits (colors 0 to 3).
 var FrameBuffer = memory[0xa0-offset:]

@@ -14,12 +14,17 @@ type Size struct {
 	Height u8
 }
 
+// Flags used with [Blit] and [BLitSub].
 type BlitFlags u8
 
 const (
+	// Use two bits per pixel
 	TwoBPP BlitFlags = 1
-	FlipX  BlitFlags = 2
-	FlipY  BlitFlags = 4
+	// Flip the image horizontally.
+	FlipX BlitFlags = 2
+	// Flip the image vertically.
+	FlipY BlitFlags = 4
+	// Rotate the image 90 degrees counterclockwise.
 	Rotate BlitFlags = 8
 )
 
