@@ -12,6 +12,8 @@ var offset uintptr = 4
 var memory = (*[6556]byte)(unsafe.Pointer(offset))
 
 // BGR888 color in the palette.
+//
+// https://wasm4.org/docs/guides/basic-drawing#the-palette-register
 type Color struct {
 	// Red channel, from 0 to 255.
 	R u8
@@ -29,6 +31,8 @@ type palette struct{}
 //
 // Which colors from the palette are used to draw a specific element
 // is controlled by [DrawColors].
+//
+// https://wasm4.org/docs/guides/basic-drawing#the-palette-register
 var Palette = palette{}
 
 // Get a color from the palette.
@@ -59,6 +63,8 @@ func (palette) Set(c1, c2, c3, c4 Color) {
 }
 
 // A color from the palette used bu draw functions.
+//
+// https://wasm4.org/docs/guides/basic-drawing#the-draw_colors-register
 type DrawColor u8
 
 const (
@@ -83,6 +89,8 @@ const (
 type drawColors struct{}
 
 // Defines which colors from the palette should be used by the draw functions.
+//
+// https://wasm4.org/docs/guides/basic-drawing#the-draw_colors-register
 var DrawColors = drawColors{}
 
 // Set all four draw colors.
@@ -143,11 +151,15 @@ type gamepads []gamepad
 //   - The first one is always available and is the local player.
 //   - The second one can be either a local hotseat player or a remote one.
 //   - Gamepads 3 and 4 are always remote players.
+//
+// https://wasm4.org/docs/guides/user-input#gamepad
 var Gamepads = gamepads{0x12, 0x13, 0x14, 0x15}
 
 type mouse struct{}
 
 // The mouse position and mouse buttons (left, right, and middle) state.
+//
+// https://wasm4.org/docs/guides/user-input#mouse
 var Mouse = mouse{}
 
 // X coordinate of the mouse cursor on the display.
@@ -193,6 +205,8 @@ func (systemFlags) HideGamepadOverlay(v bool) {
 type netplay struct{}
 
 // Multiplayer state.
+//
+// https://wasm4.org/docs/guides/multiplayer#the-netplay-memory-register
 var NetPlay = netplay{}
 
 // Local player index (0 to 3).
@@ -210,4 +224,6 @@ func (netplay) Active() bool {
 type frameBuffer [6400]byte
 
 // Array of 160x160 pixels, with each pixel packed into 2 bits (colors 0 to 3).
+//
+// https://wasm4.org/docs/guides/basic-drawing#direct-framebuffer-access
 var FrameBuffer = memory[0xa0-offset:]

@@ -14,7 +14,7 @@ type Size struct {
 	Height u8
 }
 
-// Flags used with [Blit] and [BLitSub].
+// Flags used with [Blit] and [BlitSub].
 type BlitFlags u8
 
 const (
@@ -33,9 +33,13 @@ type Tone struct {
 	StartFreq uint
 
 	// End wave frequency in hertz, used to describe a pitch slide effect.
+	//
+	// https://wasm4.org/docs/guides/audio#frequency-slide
 	EndFreq uint
 
 	// Volume of the sustain duration, between 0 and 100.
+	//
+	// https://wasm4.org/docs/guides/audio#volume
 	SustainVol u8
 
 	// Volume of the attack duration, between 0 and 100.
@@ -47,15 +51,23 @@ type Tone struct {
 
 	// Duration of the tone in frames (1/60th of a second), up to 255 frames.
 	// Sustain time of ADSR envelope.
+	//
+	// https://wasm4.org/docs/guides/audio#adsr-envelope
 	Sustain u8
 
 	// Attack time of ADSR envelope.
+	//
+	// https://wasm4.org/docs/guides/audio#adsr-envelope
 	Attack u8
 
 	// Decay time of ADSR envelope.
+	//
+	// https://wasm4.org/docs/guides/audio#adsr-envelope
 	Decay u8
 
 	// Release time of ADSR envelope.
+	//
+	// https://wasm4.org/docs/guides/audio#adsr-envelope
 	Release u8
 }
 
@@ -68,6 +80,9 @@ const (
 	Noise    Channel = 3
 )
 
+// The duty cycle of the tone.
+//
+// https://wasm4.org/docs/guides/audio#duty-cycle
 type DutyCycle u8
 
 const (
@@ -77,6 +92,9 @@ const (
 	DutyCycle3p4 DutyCycle = 12
 )
 
+// Panning
+//
+// https://wasm4.org/docs/guides/audio#panning
 type Pan u8
 
 const (
@@ -85,22 +103,10 @@ const (
 	Right  Pan = 32
 )
 
-type ToneFlags u8
-
-const (
-	TonePulse1   = 0
-	TonePulse2   = 1
-	ToneTriangle = 2
-	ToneNoise    = 3
-	ToneMode1    = 0
-	ToneMode2    = 4
-	ToneMode3    = 8
-	ToneMode4    = 12
-)
-
 // Copies pixels to the framebuffer.
 //
-// https://wasm4.org/docs/reference/functions#blit-spriteptr-x-y-width-height-flags
+//   - https://wasm4.org/docs/guides/sprites
+//   - https://wasm4.org/docs/reference/functions#blit-spriteptr-x-y-width-height-flags
 func Blit(sprite []byte, p Point, s Size, f BlitFlags) {
 	blit(&sprite[0], p.X, p.Y, s.Width, s.Height, u8(f))
 }
@@ -156,14 +162,16 @@ func DrawRect(p Point, s Size) {
 //
 // The font is 8x8 pixels per character.
 //
-// https://wasm4.org/docs/reference/functions#text-str-x-y
+//   - https://wasm4.org/docs/reference/functions#text-str-x-y
+//   - https://wasm4.org/docs/guides/text
 func DrawText(text string, p Point) {
 	textUtf8(text, p.X, p.Y)
 }
 
 // Play a sound tone.
 //
-// https://wasm4.org/docs/reference/functions#tone-frequency-duration-volume-flags
+//   - https://wasm4.org/docs/guides/audio
+//   - https://wasm4.org/docs/reference/functions#tone-frequency-duration-volume-flags
 func PlayTone(t Tone) {
 	flags := u8(t.Channel) | u8(t.DutyCycle) | u8(t.Pan)
 	freq := (uint32(t.StartFreq) << 8) | uint32(t.EndFreq)
@@ -183,11 +191,15 @@ func Trace(text string) {
 // Reads bytes from persistent storage into the buffer.
 //
 // Make sure the buffer has cap enough to fit the data.
+//
+// https://wasm4.org/docs/guides/saving-data?code-lang=go#reading-data-from-disk
 func Load(buf []byte) uint {
 	return diskR(&buf[0], len(buf))
 }
 
 // Writes bytes from the buffer into persistent storage.
+//
+// https://wasm4.org/docs/guides/saving-data?code-lang=go#writing-data-to-disk
 func Save(buf []byte) uint {
 	return diskW(&buf[0], len(buf))
 }
