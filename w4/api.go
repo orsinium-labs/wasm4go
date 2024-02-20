@@ -1,19 +1,5 @@
 package w4
 
-type u8 = uint8
-
-// A point on the plane.
-type Point struct {
-	X u8
-	Y u8
-}
-
-// Size of a 2D shape.
-type Size struct {
-	Width  u8
-	Height u8
-}
-
 // Flags used with [Blit] and [BlitSub].
 type BlitFlags u8
 
