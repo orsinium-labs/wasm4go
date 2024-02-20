@@ -122,6 +122,11 @@ func (drawColors) SetSecondary(c DrawColor) {
 
 type gamepad uint
 
+// The gamepad of the local player.
+//
+// The same as Gamepads[0].
+var Gamepad gamepad = 0x12
+
 // Check if X button is currently pressed on the gamepad.
 func (g gamepad) X() bool { return memory[g]&1 != 0 }
 
@@ -146,7 +151,7 @@ func (g gamepad) Any() bool { return memory[g] != 0 }
 // 4 gamepads, with each gamepad represented by a single byte.
 type gamepads []gamepad
 
-// And array of 4 gamepads.
+// An array of 4 gamepads.
 //
 //   - The first one is always available and is the local player.
 //   - The second one can be either a local hotseat player or a remote one.
@@ -154,6 +159,11 @@ type gamepads []gamepad
 //
 // https://wasm4.org/docs/guides/user-input#gamepad
 var Gamepads = gamepads{0x12, 0x13, 0x14, 0x15}
+
+// Get a gamepad by index (from 0 to 3).
+func (gamepads) Get(idx u8) gamepad {
+	return Gamepads[idx]
+}
 
 type mouse struct{}
 

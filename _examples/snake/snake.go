@@ -39,7 +39,7 @@ func main() {
 
 // Update the snake direction based on the buttons pressed on the gamepad.
 func input() {
-	g := w4.Gamepads[0]
+	g := w4.Gamepad
 	if g.Up() {
 		snake.Up()
 	}
