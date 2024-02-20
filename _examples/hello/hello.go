@@ -20,8 +20,7 @@ func main() {
 func update() {
 	w4.DrawColors.SetPrimary(w4.Primary)
 	w4.DrawText("Hello from TinyGo!", w4.Point{X: 10, Y: 10})
-	gamepad := w4.Gamepads[0]
-	if gamepad.X() {
+	if w4.Gamepad.X() {
 		w4.DrawColors.SetPrimary(w4.Dark)
 	}
 	w4.Blit(smiley, w4.Point{X: 76, Y: 76}, w4.Size{Width: 8, Height: 8}, 0)
