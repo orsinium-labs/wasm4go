@@ -56,6 +56,7 @@ func (palette) Get(d DrawColor) Color {
 func (palette) Set(c1, c2, c3, c4 Color) {
 	for i, c := range [4]Color{c1, c2, c3, c4} {
 		start := uint(i * 4)
+		memory[start+3] = 0
 		memory[start+2] = byte(c.R)
 		memory[start+1] = byte(c.G)
 		memory[start+0] = byte(c.B)

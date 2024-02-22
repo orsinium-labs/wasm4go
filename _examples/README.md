@@ -14,4 +14,5 @@ Available examples:
 1. [Install the latest dev version of TinyGo](https://tinygo.org/getting-started/install/linux/#development-builds).
 1. [Install WASM-4 CLI](https://wasm4.org/docs/getting-started/setup)
 1. [Install task](https://taskfile.dev/installation/)
+1. Optional: install [WABT](https://github.com/WebAssembly/wabt).
 1. Run `task run -- ./snake` to run the snake demo.

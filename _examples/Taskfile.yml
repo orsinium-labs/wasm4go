@@ -10,6 +10,8 @@ tasks:
       -gc     leaking
       -o      cart.wasm
       {{.CLI_ARGS}}
+    # remove debug info but only if wabt is installed
+    - wasm-strip cart.wasm || true
   run:
     - task: build
     - w4 run-native ./cart.wasm
