@@ -4,6 +4,7 @@ version: '3'
 tasks:
   build:
     - test {{.CLI_ARGS}}
+    - tinygo version
     - >
       tinygo build
       -target ./target.json
