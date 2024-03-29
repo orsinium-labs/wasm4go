@@ -16,6 +16,7 @@
     "--initial-memory=65536",
     "--max-memory=65536",
     "--stack-first",
+    "--no-entry",
     "-zstack-size=14752"
   ]
 }

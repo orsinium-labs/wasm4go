@@ -13,7 +13,7 @@ var smiley = []byte{
 	0b11000011,
 }
 
-func main() {
+func init() {
 	w4.Update = update
 }
 

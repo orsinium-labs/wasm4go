@@ -29,7 +29,7 @@ var (
 	randInt = rand.New(rand.NewSource(1)).Intn
 )
 
-func main() {
+func init() {
 	// Set the function to be called on start.
 	w4.Start = start
 
